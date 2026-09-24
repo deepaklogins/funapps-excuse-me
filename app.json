@@ -1,25 +1,46 @@
 {
   "expo": {
-    "name": "excuse-generator",
-    "slug": "excuse-generator",
+    "name": "Excuse Me! - Excuse Generator",
+    "slug": "excuse-me",
+    "scheme": "excuse-me",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0f0f1a"
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.funapps.excuseme"
     },
     "android": {
+      "package": "com.funapps.excuseme",
+      "versionCode": 1,
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#e94560",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
-      },
-      "predictiveBackGestureEnabled": false
+      }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-status-bar",
+      "expo-sharing"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": ""
+      },
+      "router": {}
+    },
+    "owner": "brand_crackers"
   }
 }
