@@ -11,6 +11,7 @@ import {
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import * as Clipboard from 'expo-clipboard';
 import { categories } from '../src/data/excuses';
 
 const { width } = Dimensions.get('window');
@@ -25,10 +26,14 @@ export default function ExcuseScreen() {
     return { text: category.excuses[idx], index: idx };
   });
 
+  const [copyLabel, setCopyLabel] = useState('Copy');
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
+  const isAnimating = useRef(false);
 
   const getNextExcuse = useCallback(() => {
+    if (isAnimating.current) return;
+    isAnimating.current = true;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     // Animate out
@@ -74,7 +79,9 @@ export default function ExcuseScreen() {
           useNativeDriver: true,
           friction: 8,
         }),
-      ]).start();
+      ]).start(() => {
+        isAnimating.current = false;
+      });
     });
   }, [category, currentExcuse, usedIndices, fadeAnim, scaleAnim]);
 
@@ -87,10 +94,11 @@ export default function ExcuseScreen() {
     } catch {}
   };
 
-  const handleCopy = () => {
+  const handleCopy = async () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    // React Native doesn't have clipboard by default, so we'll share instead
-    handleShare();
+    await Clipboard.setStringAsync(currentExcuse.text);
+    setCopyLabel('Copied!');
+    setTimeout(() => setCopyLabel('Copy'), 2000);
   };
 
   return (
@@ -141,7 +149,7 @@ export default function ExcuseScreen() {
           onPress={handleCopy}
         >
           <Ionicons name="copy-outline" size={20} color="#fff" />
-          <Text style={styles.actionBtnText}>Copy</Text>
+          <Text style={styles.actionBtnText}>{copyLabel}</Text>
         </TouchableOpacity>
       </View>
 
@@ -198,7 +206,6 @@ const styles = StyleSheet.create({
     left: 20,
     fontSize: 48,
     color: '#333',
-    fontFamily: 'Georgia',
   },
   quoteClose: {
     position: 'absolute',
@@ -206,7 +213,6 @@ const styles = StyleSheet.create({
     right: 20,
     fontSize: 48,
     color: '#333',
-    fontFamily: 'Georgia',
   },
   excuseText: {
     fontSize: 20,
@@ -226,8 +232,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderRadius: 14,
+    minHeight: 48,
   },
   shareBtn: { backgroundColor: '#2a2a3e' },
   copyBtn: { backgroundColor: '#2a2a3e' },
